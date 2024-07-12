@@ -1,107 +1,122 @@
 import numpy as np
 import pandas as pd
 import riskfolio as rp
+from dataManagement import fechamento
+from dataManagement import data_inicial, data_final, step_eval, step_port, colunas
 
-data_inicial = 13
-data_final = 217
-colunas = 291
-step_port = 1
-step_eval = 1
-
-#Funções de apoio
-
-#Preços de fechamento dos ativos
-fechamento=pd.read_excel('dados-economatica/Dados-Fechamento.xlsx', engine='openpyxl')
-fechamento.set_index(keys = 'Data', inplace = True)
-
-#Seleção das ações que compõe um portfólio.
-#Parâmetros: (fator, ranking_inicio, ranking_fim)
-#Retorno: portfólio
 def SelPort1(port_ranked_1, param_1a, param_1b):
+    """
+    Seleciona ações para um portfólio com base em um único critério de ranking.
 
+    Args:
+    port_ranked_1 (DataFrame): DataFrame contendo rankings de ações.
+    param_1a (int): Limite inferior do ranking para inclusão no portfólio.
+    param_1b (int): Limite superior do ranking para inclusão no portfólio.
+
+    Returns:
+    DataFrame: Um DataFrame indicando quais ações foram selecionadas (1) ou não (0).
+    """
     port_ranked_final = port_ranked_1.copy()
     port_ranked_final.loc[:, :] = 0
 
     for lin in range(data_inicial, data_final, step_port):
         for col in range(0, colunas):
-            if ((port_ranked_1.iat[lin-1, col]  >= param_1a) and (port_ranked_1.iat[lin-1, col]  <= param_1b)):
+            if param_1a <= port_ranked_1.iat[lin-1, col] <= param_1b:
                 port_ranked_final.iat[lin-1, col] = 1
 
     return port_ranked_final
-#--------------------------
-#Seleção das ações que compõe um portfólio com 2 fatores.
-#Parâmetros: (fator1, limite1, fator2, limite2)
-#Retorno: portfólio
 
 def SelPort2Par(ranked_1, param_1, ranked_2, param_2):
-  port_ranked_final = ranked_1.copy()
-  port_ranked_final.loc[:, :] = 0
+    """
+    Seleciona ações para um portfólio com base em dois critérios de ranking.
 
-  for lin in range(data_inicial, data_final, step_port):
-    for col in range(0, colunas):
-      if ((ranked_1.iat[lin-1, col]  >= 1) and (ranked_1.iat[lin-1, col]  <= param_1) and
-          (ranked_2.iat[lin-1, col]  >= 1) and (ranked_2.iat[lin-1, col]  <= param_2)):
-        port_ranked_final.iat[lin-1, col] = 1
+    Args:
+    ranked_1 (DataFrame): DataFrame com o primeiro ranking de ações.
+    param_1 (int): Limite de seleção para o primeiro fator.
+    ranked_2 (DataFrame): DataFrame com o segundo ranking de ações.
+    param_2 (int): Limite de seleção para o segundo fator.
 
-  return port_ranked_final
-#--------------------------
+    Returns:
+    DataFrame: DataFrame indicando a seleção de ações com base nos dois fatores.
+    """
+    port_ranked_final = ranked_1.copy()
+    port_ranked_final.loc[:, :] = 0
 
-#Avaliação de um portfólio.
-#Parâmetros: (portfólio, histórico de preços dos ativos)
-#Retorno: vetor com retorno acumulado, vetor com retornos periódicos, vetor com drawdown, retorno anualizado, volatilidade anualizada
+    for lin in range(data_inicial, data_final, step_port):
+        for col in range(0, colunas):
+            if 1 <= ranked_1.iat[lin-1, col] <= param_1 and 1 <= ranked_2.iat[lin-1, col] <= param_2:
+                port_ranked_final.iat[lin-1, col] = 1
+
+    return port_ranked_final
+
 def EvalPort(port, fechamento):
-    port_acc_vet = []
+    """
+    Avalia um portfólio dado, calculando retorno acumulado, retorno periódico, drawdown,
+    retorno anualizado e volatilidade anualizada.
+
+    Args:
+    port (DataFrame): DataFrame do portfólio a ser avaliado.
+    fechamento (DataFrame): DataFrame com os preços de fechamento das ações.
+
+    Returns:
+    tuple: Contém listas de retorno acumulado, retorno periódico, drawdown, e valores de
+           retorno anualizado e volatilidade anualizada.
+    """
+    port_acc_vet = [1.0]  # Inicia com o capital inicial normalizado para 1
     port_chg_vet = []
     port_ddown_vet = []
 
-    port_acc = 1.0
-    port_acc_vet.append(1.0)
-    cost_trans = 0.0006
-    #cost_trans = 0.0005 + (0.004*step_eval/12)
-
     for lin in range(data_inicial, data_final, step_eval):
-        cont = 0.0
-        rent = 0.0
-        for col in range(0, colunas):
-            if (port.iat[lin-1, col] > 0 and fechamento.iat[lin-1, col]>0 and fechamento.iat[lin-1+step_eval, col]>0):
-                rent = rent + (fechamento.iat[lin-1+step_eval,col]/fechamento.iat[lin-1,col]-1)*(port.iat[lin-1, col])
-                cont = cont + port.iat[lin-1, col]
-        if (cont == 0):
-          return [1,1], [1,1], [0,0], 0, 0.000001
-        port_acc = port_acc * (1.0 + rent/cont - cost_trans)
-        port_chg_vet.append(rent/cont - cost_trans)
-        port_acc_vet.append(port_acc)
-        port_ddown_vet.append(port_acc/(np.max(port_acc_vet))-1)
+        total_return = sum((fechamento.iat[lin-1+step_eval, col] / fechamento.iat[lin-1, col] - 1) * port.iat[lin-1, col]
+                           for col in range(colunas) if port.iat[lin-1, col] > 0 and fechamento.iat[lin-1, col] > 0)
+        num_assets = port.iloc[lin-1].sum()
+        net_return = total_return / num_assets - 0.0006 if num_assets > 0 else 0
+        port_acc_vet.append(port_acc_vet[-1] * (1 + net_return))
+        port_chg_vet.append(net_return)
+        port_ddown_vet.append(min(port_acc_vet[-1] / max(port_acc_vet) - 1, 0))
 
-    ret_aa = pow(port_acc, 12/(data_final-data_inicial))-1
-    vol_aa = np.std(port_chg_vet)*((12/step_eval)**(1/2))
+    ret_aa = (port_acc_vet[-1] ** (12 / (data_final - data_inicial)) - 1)
+    vol_aa = np.std(port_chg_vet) * (12 / step_eval) ** 0.5
     return port_acc_vet, port_chg_vet, port_ddown_vet, ret_aa, vol_aa
 
-#--------------------------
-
-#Avaliação de um índice de referência.
-#Parâmetros: (dataframe de referências, indice da referência desejada [0 - Ibovespa, 1 - IBX])
-##Retorno: vetor com retorno acumulado, vetor com retornos periódicos, vetor com drawdown, retorno anualizado, volatilidade anualizada
 def EvalRef(ref, ind):
-    ref_acc_vet = []
+    """
+    Avalia um índice de referência, calculando retorno acumulado, retornos periódicos, drawdown,
+    retorno anualizado e volatilidade anualizada.
+
+    Args:
+    ref (DataFrame): DataFrame com os dados do índice.
+    ind (int): Coluna do DataFrame que será avaliada.
+
+    Returns:
+    tuple: Contém listas de retorno acumulado, retornos periódicos, drawdown, e valores de
+           retorno anualizado e volatilidade anualizada.
+    """
+    ref_acc_vet = [1.0]
     ref_chg_vet = []
     ref_ddown_vet = []
 
-    ref_acc = 1.0
-    ref_acc_vet.append(1.0)
-
     for lin in range(data_inicial, data_final, step_eval):
-        rent = ref.iat[lin-1+step_eval,ind]/ref.iat[lin-1,ind]
-        ref_acc = ref_acc * rent
-        ref_chg_vet.append(rent-1)
-        ref_acc_vet.append(ref_acc)
-        ref_ddown_vet.append(ref_acc/(np.max(ref_acc_vet))-1)
+        rent = ref.iat[lin-1+step_eval, ind] / ref.iat[lin-1, ind]
+        ref_acc_vet.append(ref_acc_vet[-1] * rent)
+        ref_chg_vet.append(rent - 1)
+        ref_ddown_vet.append(ref_acc_vet[-1] / max(ref_acc_vet) - 1)
 
-    ret_aa = pow(ref_acc, 12/(data_final-data_inicial))-1
-    vol_aa = np.std(ref_chg_vet)*((12/step_eval)**(1/2))
+    ret_aa = ref_acc_vet[-1] ** (12 / (data_final - data_inicial)) - 1
+    vol_aa = np.std(ref_chg_vet) * (12 / step_eval) ** 0.5
     return ref_acc_vet, ref_chg_vet, ref_ddown_vet, ret_aa, vol_aa
 
 def calc_riskfolio_opt(ranked, otim_opt):
+    """
+    Calcula a otimização de portfólio com base em um critério de otimização específico.
+
+    Args:
+    ranked (DataFrame): DataFrame com o ranking das ações.
+    otim_opt (str): Tipo de otimização a ser realizada ('RP', 'GMV' ou 'MDP').
+
+    Returns:
+    DataFrame: DataFrame do portfólio otimizado, ou None se a opção for inválida.
+    """
     hist_size = 24
     port = ranked.copy()
 
@@ -110,7 +125,6 @@ def calc_riskfolio_opt(ranked, otim_opt):
         return None
 
     print(f"\nCalculating {otim_opt} Portfolio...")
-
     successful_periods = 0
     failed_periods = []
 
@@ -146,7 +160,7 @@ def calc_riskfolio_opt(ranked, otim_opt):
         else:
             failed_periods.append(lin)
             
-    print("\nFinished calculating portfolio. Successful periods:", successful_periods)
+    print(" Finished calculating portfolio. Successful periods:", successful_periods)
     if failed_periods:
         print("Failed periods:", len(failed_periods), "at indices", failed_periods)
 
