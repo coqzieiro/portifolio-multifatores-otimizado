@@ -3,11 +3,11 @@ Alocação de ações em modelos de portfólios que seguem os índices de refer�
 
 ## Instalação das dependências
 
-<i>pip install Riskfolio-Lib</i>
+<code><i>pip install Riskfolio-Lib</i></code>
 
 ## Execução
 
-<i>python3 plotGraph.py</i>
+<code><i>python3 plotGraph.py</i></code>
 
 ## Método Experimental
 
