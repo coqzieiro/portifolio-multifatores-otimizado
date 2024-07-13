@@ -68,7 +68,7 @@ Alocação de ações em modelos de portfólios que seguem os índices de refer�
   </li>
   <li><strong>Ranked_Volatilidade:</strong>
       <ul>
-          <li>Volatilidade refere-se à variação do preço de uma ação em um dado período. A utilização do <code>ranked_vOL</code> significa que estamos selecionando ações com base na estabilidade de seus preços no mercado.</li>
+          <li>Volatilidade refere-se à variação do preço de uma ação em um dado período. A utilização do <code>ranked_Vol</code> significa que estamos selecionando ações com base na estabilidade de seus preços no mercado.</li>
           <li>Ações com baixa volatilidade são geralmente consideradas menos arriscadas, enquanto ações com alta volatilidade podem oferecer maiores oportunidades de ganho (e risco) em curto prazo.</li>
       </ul>
   </li>
@@ -78,35 +78,28 @@ Alocação de ações em modelos de portfólios que seguem os índices de refer�
             <li>Ao maximizar a descorrelação, estamos criando um portfólio que é mais robusto às variações de mercado, reduzindo o risco total e potencialmente aumentando o retorno ajustado ao risco.</li>
         </ul>
     </li>
-    <li><strong>Por que isso funciona?</strong>
-        <ul>
-            <li>Diversificação Efetiva: Com a máxima descorrelação, o portfólio é bem diversificado. Diversificação eficaz reduz o risco total sem necessariamente reduzir o retorno esperado. Portanto, o portfólio se torna mais estável e menos volátil.</li>
-            <li>Aproveitamento de Anomalias de Mercado: Os fatores <code>P/VPA</code> e <code>momentum</code> são bem documentados na literatura financeira como anomalias que oferecem retornos superiores ao mercado. Investir com base nesses fatores permite capturar esses retornos adicionais.</li>
-            <li>Seleção de Ações de Alta Qualidade e Potencial: As ações selecionadas com base no <code>ranked_pvp</code> são geralmente subvalorizadas e têm um bom potencial de crescimento, enquanto as ações com bom <code>ranked_momentum</code> indicam uma tendência positiva que pode continuar. Combinando esses fatores, você seleciona ações com bons fundamentos e um histórico recente positivo.</li>
-        </ul>
-    </li>
+  <li><strong>Por que isso funciona?</strong>
+      <ul>
+          <li>Diversificação Efetiva: Com base na volatilidade, a seleção visa a estabilidade do portfólio. Ações com baixa volatilidade contribuem para uma diversificação que mitiga riscos sem comprometer o potencial de retorno, levando a um portfólio globalmente mais estável.</li>
+          <li>Otimização de Retornos Ajustados ao Risco: O ROIC é uma métrica crucial para identificar empresas que geram retornos eficientes sobre o capital investido. Investir em empresas com alto ROIC pode oferecer uma vantagem, pois elas são capazes de gerar valor acima da média de forma sustentável.</li>
+          <li>Seleção de Ações de Alta Eficiência e Estabilidade: As ações selecionadas com base em <code>ranked_ROIC</code> são eficientes em termos de geração de valor, enquanto aquelas com baixa <code>ranked_Vol</code> oferecem menos riscos de grandes flutuações. Esta combinação promove um equilíbrio entre eficiência na geração de valor e estabilidade de preço, aumentando o potencial de um desempenho favorável sustentado.</li>
+      </ul>
+  </li>
 </ol>
 
 ## Análise Modelo 2: Maior Retorno/Volatilidade
 
 <ol>
-    <li><strong>ROIC (Return on Invested Capital):</strong>
+    <li><strong>Standard Risk Parity:</strong>
         <ul>
-            <li>Eficiência na Alocação de Capital: Empresas com altos ROICs tendem a ser mais eficientes na utilização de seus capitais para gerar lucros. Isso pode indicar que a empresa tem um modelo de negócios robusto, vantagens competitivas sustentáveis e boas práticas de gestão.</li>
-            <li>Menor Probabilidade de Perda: Empresas com altos ROICs geralmente têm menor probabilidade de enfrentar dificuldades financeiras, o que pode reduzir a volatilidade de suas ações.</li>
+            <li>Equilíbrio de Risco: O modelo de Paridade de Risco Padrão distribui igualmente o risco entre todos os ativos no portfólio, o que ajuda a maximizar a diversificação e minimizar a dependência de qualquer único ativo ou fator.</li>
+            <li>Sustentabilidade do Retorno: Portfólios construídos com base na paridade de risco tendem a ser mais resilientes durante períodos de volatilidade do mercado, mantendo uma performance estável ao longo do tempo.</li>
         </ul>
     </li>
-    <li><strong>Volatilidade:</strong>
+    <li><strong>Minimum Variance:</strong>
         <ul>
-            <li>Gestão de Risco: Selecionar ações com baixa volatilidade pode ajudar a minimizar os movimentos bruscos nos preços das ações, resultando em um portfólio mais estável. Isso é especialmente importante quando se busca um bom retorno ajustado ao risco.</li>
-            <li>Previsibilidade: Ações com baixa volatilidade tendem a ser mais previsíveis, o que facilita a gestão do portfólio e pode levar a um desempenho mais consistente ao longo do tempo.</li>
-        </ul>
-    </li>
-    <li><strong>Combinação de Fatores:</strong>
-        <ul>
-            <li>Sinergia: A combinação de fatores de alto ROIC e baixa volatilidade pode criar um portfólio de alta qualidade, onde você tem empresas eficientes que também apresentam estabilidade nos preços de suas ações.</li>
-            <li>Mitigação de Riscos Específicos: Ao selecionar empresas com base em múltiplos critérios (ROIC e volatilidade), você está mitigando riscos específicos que podem estar presentes se você usar apenas um critério de seleção.</li>
-            <li>Balanceamento de Risco: Ao equilibrar o risco entre os ativos, você está evitando a concentração de risco em uma única ação ou setor, o que pode ajudar a suavizar os retornos e reduzir a volatilidade.</li>
+            <li>Minimização de Volatilidade: O modelo de Mínima Variância foca em selecionar ativos que juntos formam o portfólio com a menor volatilidade possível, ideal para investidores que buscam um retorno estável com menor risco.</li>
+            <li>Consistência de Retorno: Portfólios de mínima variância podem oferecer um retorno mais consistente e previsível, atraindo investidores que preferem evitar grandes flutuações nos valores de seus investimentos.</li>
         </ul>
     </li>
 </ol>
