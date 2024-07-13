@@ -60,18 +60,18 @@ Alocação de ações em modelos de portfólios que seguem os índices de refer�
 ## Análise Modelo 1: Maior Retorno
 
 <ol>
-    <li><strong>Ranked_PVP (Preço sobre Valor Patrimonial):</strong>
-        <ul>
-            <li>O P/VPA é um indicador financeiro que compara o preço de mercado de uma ação ao seu valor contábil por ação. A utilização do <code>ranked_pvp</code> significa que estamos selecionando ações com base em suas classificações de P/VPA.</li>
-            <li>Em geral, ações com baixo <code>P/VPA</code> são consideradas subvalorizadas, e a seleção das melhores ações segundo este critério pode identificar empresas que estão sendo negociadas a um preço inferior ao seu valor contábil, oferecendo potencial de valorização.</li>
-        </ul>
-    </li>
-    <li><strong>Ranked_Momentum:</strong>
-        <ul>
-            <li>Momentum se refere à tendência de continuação do desempenho passado das ações. Ações que têm mostrado um bom desempenho recente tendem a continuar a ter um bom desempenho no curto prazo.</li>
-            <li>Utilizar <code>ranked_momentum</code> significa que estamos selecionando ações que tiveram um forte desempenho nos últimos períodos, o que pode indicar uma tendência de continuidade desse desempenho positivo.</li>
-        </ul>
-    </li>
+   <li><strong>Ranked_ROIC (Retorno sobre o Capital Investido):</strong>
+      <ul>
+          <li>O ROIC é uma medida de eficiência que indica quanto uma empresa é capaz de gerar de retorno para cada unidade de capital investido. A utilização do <code>ranked_ROIC</code> significa que estamos selecionando empresas com base em sua capacidade de gerar valor a partir de seus investimentos.</li>
+          <li>Empresas com um alto <code>ROIC</code> são frequentemente consideradas mais eficientes e capazes de gerar valor sustentável para os acionistas, o que pode representar uma vantagem competitiva no longo prazo.</li>
+      </ul>
+  </li>
+  <li><strong>Ranked_Volatilidade:</strong>
+      <ul>
+          <li>Volatilidade refere-se à variação do preço de uma ação em um dado período. A utilização do <code>ranked_vOL</code> significa que estamos selecionando ações com base na estabilidade de seus preços no mercado.</li>
+          <li>Ações com baixa volatilidade são geralmente consideradas menos arriscadas, enquanto ações com alta volatilidade podem oferecer maiores oportunidades de ganho (e risco) em curto prazo.</li>
+      </ul>
+  </li>
     <li><strong>Máxima Descorrelação:</strong>
         <ul>
             <li>Descorrelação refere-se à seleção de ativos cujos retornos não são fortemente correlacionados entre si. Isso é importante porque a diversificação reduz o risco específico de cada ativo no portfólio.</li>
